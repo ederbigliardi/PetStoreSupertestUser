@@ -81,7 +81,7 @@ describe('API PetStore Swagger - Entidade User', () => {
     // Testes Data-Driven: Criar e excluir múltiplos usuários
     massa1.array.forEach(({ idMassa, usernameMassa, firstNameMassa, lastNameMassa, emailMassa, passwordMassa, phoneMassa, userStatusMassa }) => {
 
-        it(`POST User Data Driven - ${username}`, async () => {
+        it(`POST User Data Driven - ${usernameMassa}`, async () => {
             const user = require('../../vendors/json/user.json')
             // Substituimos os campos que queremos personalizar através da massa
             user.id = idMassa
@@ -102,7 +102,7 @@ describe('API PetStore Swagger - Entidade User', () => {
                 });
         });
 
-        it(`GET User Data Driven - ${username}`, async () => {
+        it(`GET User Data Driven - ${usernameMassa}`, async () => {
             return request
                 .get(`/user/${usernameMassa}`)
                 .then((res) => {
@@ -117,7 +117,7 @@ describe('API PetStore Swagger - Entidade User', () => {
                 });
         });
 
-        it(`DELETE User Data Driven - ${username}`, async () => {
+        it(`DELETE User Data Driven - ${usernameMassa}`, async () => {
             return request
                 .delete(`/user/${usernameMassa}`)
                 .then((res) => {
