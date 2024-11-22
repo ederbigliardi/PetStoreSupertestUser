@@ -104,26 +104,26 @@ describe('API PetStore Swagger - Entidade User', () => {
 
         it(`GET User Data Driven - ${username}`, async () => {
             return request
-                .get(`/user/${username}`)
+                .get(`/user/${usernameMassa}`)
                 .then((res) => {
                     expect(res.statusCode).toBe(200);
-                    expect(res.body.id).toBe(id);
-                    expect(res.body.username).toBe(username);
-                    expect(res.body.firstName).toBe(firstName);
-                    expect(res.body.lastName).toBe(lastName);
-                    expect(res.body.email).toBe(email);
-                    expect(res.body.phone).toBe(phone);
-                    expect(res.body.userStatus).toBe(userStatus);
+                    expect(res.body.id).toBe(idMassa);
+                    expect(res.body.username).toBe(usernameMassa);
+                    expect(res.body.firstName).toBe(firstNameMassa);
+                    expect(res.body.lastName).toBe(lastNameMassa);
+                    expect(res.body.email).toBe(emailMassa);
+                    expect(res.body.phone).toBe(phoneMassa);
+                    expect(res.body.userStatus).toBe(userStatusMassa);
                 });
         });
 
         it(`DELETE User Data Driven - ${username}`, async () => {
             return request
-                .delete(`/user/${username}`)
+                .delete(`/user/${usernameMassa}`)
                 .then((res) => {
                     expect(res.statusCode).toBe(200);
                     expect(res.body.code).toBe(200);
-                    expect(res.body.message).toBe(username);
+                    expect(res.body.message).toBe(usernameMassa);
                 });
         });
     });
