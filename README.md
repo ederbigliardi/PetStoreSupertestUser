@@ -1,89 +1,86 @@
-🧪 Testes de API com Supertest – CRUD de Usuários (PetStore Swagger)
+🐾 PetStore User API – Testes com Supertest (Versão Atualizada)
 
-Este projeto contém uma suíte de testes automatizados desenvolvida com Supertest e Jest, utilizando a API pública da PetStore Swagger (v2) como base.
-O objetivo foi validar o CRUD da entidade User, aplicando boas práticas de automação e utilizando também testes Data-Driven.
+Este repositório contém uma suíte de testes automatizados criada com Jest + Supertest, validando as operações de CRUD da entidade User na API pública PetStore Swagger.
+Inclui também testes Data-Driven, permitindo validar múltiplos usuários utilizando diferentes massas de dados.
 
-🚀 Tecnologias utilizadas
+📌 Tecnologias Utilizadas
 
 Node.js
 
-Jest – framework de testes
+Jest
 
-Supertest – requisições HTTP para testes de API
+Supertest
 
-PetStore Swagger API (https://petstore.swagger.io/v2
-)
+PetStore Swagger API
 
-📁 Estrutura dos testes
+Massa de dados (JSON)
 
-O projeto inclui:
-
-✔️ Testes funcionais para a entidade User:
-
-POST /user – criação de usuário
-
-GET /user/{username} – consulta por username
-
-PUT /user/{username} – atualização de usuário
-
-DELETE /user/{username} – remoção de usuário
-
-Todos os testes validam status code, campos do body, e valores esperados conforme a documentação da API.
-
-🔄 Testes Data-Driven
-
-Além dos testes individuais, também foi implementado um conjunto de testes Data-Driven, utilizando uma massa de dados externa (massaUsers.json).
-
-Para cada usuário da massa, são executados automaticamente:
-
-POST → criação de usuário com dados customizados
-
-GET → consulta validando todos os campos
-
-DELETE → remoção do usuário criado
-
-Isso permite:
-
-Melhor cobertura
-
-Reutilização da estrutura de testes
-
-Facilidade para adicionar novos cenários
-
-📦 Como instalar e executar
-1. Clone o repositório
-git clone https://github.com/seu-usuario/seu-repo.git
-
-2. Instale as dependências
-npm install
-
-3. Execute os testes
-npm test
-
-🗂️ Estrutura do projeto
-├── tests
-│   └── user
-│       └── user.test.js        # Arquivo principal de testes
+📁 Estrutura do Projeto (Simplificada)
+├── Test
+│   └── api
+│       └── user.spec.js
 ├── vendors
 │   └── json
-│       ├── user.json           # Modelo base para criação de usuários
-│       ├── userput.json        # Massa para teste de PUT
-│       └── massaUsers.json     # Massa para testes data-driven
-└── package.json
+│       ├── user.json
+│       ├── userput.json
+│       └── massaUsers.json
+├── package.json
+└── README.md
 
-🧠 Principais aprendizados
+🚀 Como Executar o Projeto
+1️⃣ Instale as dependências
+npm install
 
-Estruturação de testes automatizados de API
+2️⃣ Execute os testes
+npm test
 
-Uso do Supertest integrado ao Jest
+🧪 Escopo dos Testes
+✔ Testes Individuais (Usuário Principal)
 
-Implementação de testes Data-Driven
+A suíte testa o CRUD completo do usuário principal, incluindo:
 
-Validação completa do corpo da resposta
+POST → Criação do usuário
 
-Fluxo CRUD completo de uma entidade
+GET → Consulta por username
 
-📌 Observações
+PUT → Atualização dos dados
 
-A API da PetStore é pública e pode sofrer instabilidades, o que pode ocasionar respostas fora do padrão.
-Os testes foram criados considerando o comportamento mais consistente da API.
+DELETE → Exclusão do usuário
+
+Antes dos testes serem executados, o usuário principal é recriado automaticamente via beforeAll(), garantindo que GET e DELETE sempre funcionem sem erros 404.
+
+✔ Testes Data-Driven
+
+O projeto inclui testes repetidos automaticamente para vários usuários definidos em massaUsers.json, cobrindo:
+
+Criação
+
+Consulta
+
+Exclusão
+
+Esses cenários geram maior cobertura e reduzem duplicação de código.
+
+🔧 Pontos Melhorados nesta Versão
+
+Código refatorado e mais enxuto
+
+Suite mais estável com beforeAll()
+
+Correção do problema de 404 nos métodos GET/DELETE
+
+Organização das massas de dados
+
+Reuso de payload base (user.json)
+
+Maior padronização das asserções
+
+🌐 Referência da API
+
+API utilizada:
+https://petstore.swagger.io/
+
+📄 Licença
+
+Este projeto é somente para estudo e prática.
+Livre para uso educacional.
