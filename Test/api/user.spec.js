@@ -1,130 +1,146 @@
-// Importação das bibliotecas necessárias
+// Importações
 const supertest = require('supertest');
-
-// Configuração da base URL
 const request = supertest('https://petstore.swagger.io/v2');
-const massa1 = require('../../vendors/json/massaUsers')
+const massa1 = require('../../vendors/json/massaUsers');
 
-// Identificação do usuário específico para testes simples
-const userId = 906898810; // ID único fornecido no JSON
-const username = 'Tom'; // Nome de usuário fornecido no JSON
+// Dados fixos do usuário principal
+const mainUser = {
+    id: 906898810,
+    username: 'Tom',
+    firstName: 'Sellec',
+    lastName: 'Magnun',
+    email: 'tomsellec@gmail.com',
+    phone: '999999999',
+    userStatus: 1
+};
 
-describe('API PetStore Swagger - Entidade User', () => {
+function loadJson(path) {
+    return require(path);
+}
 
-    // Teste: POST - Criar usuário
+describe('PetStore User API - Versão Corrigida', () => {
+
+    // Garante que o usuário principal sempre exista antes de todos os testes
+    beforeAll(async () => {
+        await request.post('/user').send(mainUser);
+    });
+
+    // POST
     it('POST User', async () => {
-        const user = require('../../vendors/json/user.json')
+        const user = loadJson('../../vendors/json/user.json');
 
-        // Função de teste em si
-        return request
-            .post('/user')
-            .send(user)
-            .then((res) => {
-                expect(res.statusCode).toBe(200);
-                expect(res.body.code).toBe(200);
-                expect(res.body.message).toBe(user.id.toString());
-            });
+        const res = await request.post('/user').send(user);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.code).toBe(200);
+        expect(res.body.message).toBe(user.id.toString());
     });
 
-    // Teste: GET - Obter usuário por username
+    // GET
     it('GET User', async () => {
-        return request
-            .get(`/user/${username}`)
-            .then((res) => {
-                expect(res.statusCode).toBe(200);
-                expect(res.body.id).toBe(userId);
-                expect(res.body.username).toBe(username);
-                expect(res.body.firstName).toBe('Sellec');
-                expect(res.body.lastName).toBe('Magnun');
-                expect(res.body.email).toBe('tomsellec@gmail.com');
-                expect(res.body.phone).toBe('999999999');
-                expect(res.body.userStatus).toBe(1);
-            });
+
+        const res = await request.get(`/user/${mainUser.username}`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.id).toBe(mainUser.id);
+        expect(res.body.username).toBe(mainUser.username);
+        expect(res.body.firstName).toBe(mainUser.firstName);
+        expect(res.body.lastName).toBe(mainUser.lastName);
+        expect(res.body.email).toBe(mainUser.email);
+        expect(res.body.phone).toBe(mainUser.phone);
+        expect(res.body.userStatus).toBe(mainUser.userStatus);
     });
 
-    // Teste: PUT - Atualizar usuário
+    // PUT
     it('PUT User', async () => {
-        const updatedUser = require('../../vendors/json/userput.json')
+        const updatedUser = loadJson('../../vendors/json/userput.json');
 
-        return request
-            .put(`/user/${username}`)
-            .send(updatedUser)
-            .then((res) => {
-                expect(res.statusCode).toBe(200);
-                expect(res.body.code).toBe(200);
-                expect(res.body.message).toBe(updatedUser.id.toString());
-            });
+        const res = await request.put(`/user/${mainUser.username}`).send(updatedUser);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.code).toBe(200);
+        expect(res.body.message).toBe(updatedUser.id.toString());
     });
 
-    // Teste: DELETE - Remover usuário
+    // DELETE
     it('DELETE User', async () => {
-        return request
-            .delete(`/user/${username}`)
-            .then((res) => {
-                expect(res.statusCode).toBe(200);
-                expect(res.body.code).toBe(200);
-                expect(res.body.message).toBe(username);
-            });
+
+        // garante existência
+        await request.post('/user').send(mainUser);
+
+        const res = await request.delete(`/user/${mainUser.username}`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.code).toBe(200);
+        expect(res.body.message).toBe(mainUser.username);
     });
 
-    it.each(massa1.array.map(elemento => [
-        elemento.idMassa,
-        elemento.usernameMassa,
-        elemento.firstNameMassa,
-        elemento.lastNameMassa,
-        elemento.emailMassa,
-        elemento.passwordMassa,
-        elemento.phoneMassa,
-        elemento.userStatusMassa
-    ]))
+    // -----------------------------------------
+    // DATA-DRIVEN
+    // -----------------------------------------
+    describe('Data Driven Users', () => {
 
-    // Testes Data-Driven: Criar e excluir múltiplos usuários
-    massa1.array.forEach(({ idMassa, usernameMassa, firstNameMassa, lastNameMassa, emailMassa, passwordMassa, phoneMassa, userStatusMassa }) => {
+        massa1.array.forEach(userData => {
 
-        it(`POST User Data Driven - ${usernameMassa}`, async () => {
-            const user = require('../../vendors/json/user.json')
-            // Substituimos os campos que queremos personalizar através da massa
-            user.id = idMassa
-            user.username = usernameMassa
-            user.firstName = firstNameMassa
-            user.lastName = lastNameMassa
-            user.email = emailMassa
-            user.password = passwordMassa
-            user.phone = phoneMassa
-            user.userStatus = userStatusMassa
+            const {
+                idMassa,
+                usernameMassa,
+                firstNameMassa,
+                lastNameMassa,
+                emailMassa,
+                passwordMassa,
+                phoneMassa,
+                userStatusMassa
+            } = userData;
 
-            return request
-                .post('/user')
-                .send(user)
-                .then((res) => {
-                    expect(res.statusCode).toBe(200);
-                    expect(res.body.message).toBe(idMassa.toString());
-                });
+            const userPayload = {
+                id: idMassa,
+                username: usernameMassa,
+                firstName: firstNameMassa,
+                lastName: lastNameMassa,
+                email: emailMassa,
+                password: passwordMassa,
+                phone: phoneMassa,
+                userStatus: userStatusMassa
+            };
+
+            it(`POST User Data Driven - ${usernameMassa}`, async () => {
+
+                const res = await request.post('/user').send(userPayload);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.body.message).toBe(idMassa.toString());
+            });
+
+            it(`GET User Data Driven - ${usernameMassa}`, async () => {
+
+                // Garantir que usuário exista
+                await request.post('/user').send(userPayload);
+
+                const res = await request.get(`/user/${usernameMassa}`);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.body.id).toBe(idMassa);
+                expect(res.body.username).toBe(usernameMassa);
+                expect(res.body.firstName).toBe(firstNameMassa);
+                expect(res.body.lastName).toBe(lastNameMassa);
+                expect(res.body.email).toBe(emailMassa);
+                expect(res.body.phone).toBe(phoneMassa);
+                expect(res.body.userStatus).toBe(userStatusMassa);
+            });
+
+            it(`DELETE User Data Driven - ${usernameMassa}`, async () => {
+
+                // garantir existência antes de deletar
+                await request.post('/user').send(userPayload);
+
+                const res = await request.delete(`/user/${usernameMassa}`);
+
+                expect(res.statusCode).toBe(200);
+                expect(res.body.code).toBe(200);
+                expect(res.body.message).toBe(usernameMassa);
+            });
         });
 
-        it(`GET User Data Driven - ${usernameMassa}`, async () => {
-            return request
-                .get(`/user/${usernameMassa}`)
-                .then((res) => {
-                    expect(res.statusCode).toBe(200);
-                    expect(res.body.id).toBe(idMassa);
-                    expect(res.body.username).toBe(usernameMassa);
-                    expect(res.body.firstName).toBe(firstNameMassa);
-                    expect(res.body.lastName).toBe(lastNameMassa);
-                    expect(res.body.email).toBe(emailMassa);
-                    expect(res.body.phone).toBe(phoneMassa);
-                    expect(res.body.userStatus).toBe(userStatusMassa);
-                });
-        });
-
-        it(`DELETE User Data Driven - ${usernameMassa}`, async () => {
-            return request
-                .delete(`/user/${usernameMassa}`)
-                .then((res) => {
-                    expect(res.statusCode).toBe(200);
-                    expect(res.body.code).toBe(200);
-                    expect(res.body.message).toBe(usernameMassa);
-                });
-        });
     });
 });
